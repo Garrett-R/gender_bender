@@ -1,2 +1,12 @@
 himself, herself
-Mr., Ms.
+mr., ms.
+# relatives
+uncle, aunt
+grandfather, grandmother
+nephew, niece
+father, mother
+dad, mom
+#
+man, woman
+
+END

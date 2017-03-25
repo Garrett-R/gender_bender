@@ -33,12 +33,22 @@ class GenderFlipper:
                 'Non-existent language model: "{}"'.format(language_file)
             )
         with open(language_file) as fo:
-            line = fo.readline()
-            term_0, term_1 = line.split(',')
-            term_0 = term_0.strip()
-            term_1 = term_1.strip()
-            self.male_to_female.update({term_0: term_1})
+            while True:
+                line = fo.readline()
+                if line.startswith('END'):  # TODO why can't readline figure out if it's at the end??
+                    break
+                if re.match(' *#', line):
+                    continue
 
+                from ipdb import set_trace; set_trace(context=21)
+                term_0, term_1 = line.split(',')
+                term_0 = term_0.strip()
+                term_1 = term_1.strip()
+                self.male_to_female.update({term_0: term_1})
+                # from ipdb import set_trace; set_trace(context=21)
+
+
+        from ipdb import set_trace; set_trace(context=21)
         self.female_to_male = {female: male for male, female
                                in self.male_to_female.items()}
 
