@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
 import re
 
 from ebooklib import epub
@@ -20,32 +21,44 @@ def convert_ebook(input_path):
     # the oliver twist ePub.  This happens even if I don't modify it at all.
     epub.write_epub('test.epub', book)
 
-# TODO: loaded from easy format?
-male_to_female = {
-    'himself': 'herself',
-    'Mr.': 'Ms.',
-}
+class MissingLanguageModelError(Exception):
+    pass
 
-female_to_male = {female: male for male, female in male_to_female.items()}
 
-def flip_gender(text):
-    idx = 0
-    while idx < len(text):
-        for term_0, term_1 in {**male_to_female, **female_to_male}.items():
-            # from ipdb import set_trace; set_trace(context=21)
+class GenderFlipper:
+    def __init__(self, language_file='language_models/english.txt'):
+        self.male_to_female = {}
+        if not os.path.exists(language_file):
+            raise MissingLanguageModelError(
+                'Non-existent language model: "{}"'.format(language_file)
+            )
+        with open(language_file) as fo:
+            line = fo.readline()
+            term_0, term_1 = line.split(',')
+            term_0 = term_0.strip()
+            term_1 = term_1.strip()
+            self.male_to_female.update({term_0: term_1})
 
-            match = re.match('({})[^a-zA-Z]'.format(term_0), text[idx:],
-                             re.IGNORECASE)
-            if match:
-                current_term = match.group(1)
-                term_1 = _copy_case(current_term, term_1)
-                text = text[:idx] + term_1 + text[idx+len(term_0):]
-                idx += 1
-                break
+        self.female_to_male = {female: male for male, female
+                               in self.male_to_female.items()}
 
-        idx += 1
+    def flip_gender(self, text):
+        idx = -1
+        while idx < len(text):
+            idx += 1
+            for term_0, term_1 in {**self.male_to_female,
+                                   **self.female_to_male}.items():
+                # from ipdb import set_trace; set_trace(context=21)
 
-    return text
+                match = re.match('({})[^a-zA-Z]'.format(term_0), text[idx:],
+                                 re.IGNORECASE)
+                if match:
+                    current_term = match.group(1)
+                    term_1 = _copy_case(current_term, term_1)
+                    text = text[:idx] + term_1 + text[idx+len(term_0):]
+                    break
+
+        return text
 
 
 def _copy_case(example_term, term):
