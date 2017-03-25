@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
+import itertools
 import logging
 import os
 import re
@@ -16,7 +17,7 @@ def convert_ebook(input_path, out_path):
 
     for ii, item in enumerate(book.items):
         logging.info('Working on item {}/{}'.format(ii+1, len(book.items)))
-        # from ipdb import set_trace; set_trace(context=21)
+        from ipdb import set_trace; set_trace(context=21)
         content = item.content.decode()
         content = re.sub('([Oo])liver', r'\1livia', content)
         content = flipper.flip_gender(content)
@@ -32,7 +33,7 @@ class MissingLanguageModelError(Exception):
 
 class GenderFlipper:
     def __init__(self, language_file='language_models/english.txt'):
-        self.male_to_female = {}
+        self.term_mapper = {}
         if not os.path.exists(language_file):
             raise MissingLanguageModelError(
                 'Non-existent language model: "{}"'.format(language_file)
@@ -43,31 +44,34 @@ class GenderFlipper:
                     continue
 
                 try:
-                    term_0, term_1 = line.split(',')
+                    terms_0_str, terms_1_str = line.split('=')
                 except ValueError:
                     logging.warning('Invalid line: %s', line)
                     continue
-                term_0 = term_0.strip()
-                term_1 = term_1.strip()
-                self.male_to_female.update({term_0: term_1})
+                terms_0 = [tt.strip() for tt in terms_0_str.split(',')]
+                terms_1 = [tt.strip() for tt in terms_1_str.split(',')]
 
-        self.female_to_male = {female: male for male, female
-                               in self.male_to_female.items()}
+                for term_0, term_1 in itertools.product(terms_0, terms_1):
+                    self.term_mapper.update({term_0: term_1})
+                    self.term_mapper.update({term_1: term_0})
+
+        # self.female_to_male = {female: male for male, female
+        #                        in self.male_to_female.items()}
 
     def flip_gender(self, text):
-        # Note that idx is incremented immediately, so we actually miss the very
-        # first word, of each epub segment, but that's unlikely to be a real
-        # word anywway
-        idx = 0
+        idx = -1
         while idx < len(text):
             idx += 1
             # from ipdb import set_trace; set_trace(context=21)
             # logging.info('idx %s / %s', idx, len(text))
-            for term_0, term_1 in {**self.male_to_female,
-                                   **self.female_to_male}.items():
+            for term_0, term_1 in self.term_mapper.items():
                 # from ipdb import set_trace; set_trace(context=21)
                 regex = '[^a-zA-Z]({})[^a-zA-Z]'.format(re.escape(term_0))
-                match = re.match(regex, text[idx-1:], re.IGNORECASE)
+                if idx > 0:
+                    test_text = text[idx-1:]
+                else:
+                    test_text = ' ' + text[idx:]
+                match = re.match(regex, test_text, re.IGNORECASE)
                 if match:
                     # from ipdb import set_trace; set_trace(context=21)
                     current_term = match.group(1)
