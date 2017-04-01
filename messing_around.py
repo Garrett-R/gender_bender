@@ -45,8 +45,11 @@ class GenderFlipper:
                 if re.match(' *#', line):
                     continue
 
+                unidirectional = '=>' in line
+
                 try:
                     terms_0_str, terms_1_str = line.split('=')
+                    terms_1_str = terms_1_str.lstrip('>')
                 except ValueError:
                     logging.warning('Invalid line: %s', line)
                     continue
@@ -55,14 +58,16 @@ class GenderFlipper:
 
                 for term_0, term_1 in itertools.product(terms_0, terms_1):
                     self.term_mapper.update({term_0: term_1})
-                    self.term_mapper.update({term_1: term_0})
+                    if not unidirectional:
+                        self.term_mapper.update({term_1: term_0})
 
                     self.term_mapper.update(
                         {pluralize(term_0): pluralize(term_1)}
                     )
-                    self.term_mapper.update(
-                        {pluralize(term_1): pluralize(term_0)}
-                    )
+                    if not unidirectional:
+                        self.term_mapper.update(
+                            {pluralize(term_1): pluralize(term_0)}
+                        )
 
 
 

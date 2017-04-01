@@ -1,0 +1,33 @@
+mr. = mrs., ms.
+madame = monsieur
+señor = señorita, señora
+
+dad = mom
+father = mother
+grandfather = grandmother
+nephew = niece
+uncle = aunt
+brother = sister
+husband = wife
+groom = bride
+groomsman = bridesmaid
+fiancé = fiancée
+
+brunet = brunette
+
+himself = herself
+
+dude = girl, chick
+guy, boy = girl
+man = woman
+lord, gentleman = lady
+
+########  Words that have a feminine form, and a masculine/feminine form ################
+# The reason we can't translate `actor` to `actress` is that `actor` is ambiguous 
+#########################################################################################
+actress => actor
+waitress => waitor
+foreman, forewoman => foreperson
+fisherman, fisherwoman => fisher
+
+

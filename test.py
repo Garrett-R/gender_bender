@@ -32,3 +32,12 @@ class TestFlipGender(unittest.TestCase):
         result = self.flipper.flip_gender(text)
         self.assertEqual(result, 'Attention Gentlemen and Ladies')
 
+    def test_unidirectional_flip(self):
+        # actor is ambiguous (without context, which is how this algorithm
+        # operates) so it is not flipped.
+        text = 'The actor talked to the actress'
+
+        result = self.flipper.flip_gender(text)
+        self.assertEqual(result, 'The actor talked to the actor')
+
+
