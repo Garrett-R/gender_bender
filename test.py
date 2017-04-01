@@ -5,8 +5,9 @@ from messing_around import GenderFlipper
 
 
 class TestFlipGender(unittest.TestCase):
-    def setUp(self):
-        self.flipper = GenderFlipper()
+    @classmethod
+    def setUpClass(cls):
+        cls.flipper = GenderFlipper()
 
     def test_flip_back_and_forth(self):
         text = 'himself did not know herself.'
@@ -39,5 +40,12 @@ class TestFlipGender(unittest.TestCase):
 
         result = self.flipper.flip_gender(text)
         self.assertEqual(result, 'The actor talked to the actor')
+
+    def test_multi_word_replacement(self):
+        text = 'she was one of many freshmen in the class'
+
+        result = self.flipper.flip_gender(text)
+        self.assertEqual(result, 'she was one of many first year students in '
+                                 'the class')
 
 
