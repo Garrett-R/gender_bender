@@ -25,3 +25,10 @@ class TestFlipGender(unittest.TestCase):
 
         result = self.flipper.flip_gender(text)
         self.assertEqual(result, 'Ms. Jones is back!')
+
+    def test_plural(self):
+        text = 'Attention Ladies and Gentlemen'
+
+        result = self.flipper.flip_gender(text)
+        self.assertEqual(result, 'Attention Gentlemen and Ladies')
+

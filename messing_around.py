@@ -8,6 +8,7 @@ import re
 
 from ebooklib import epub
 import gender_guesser.detector as gender
+from pluralize import pluralize
 
 logging.basicConfig(level=logging.INFO)
 
@@ -32,7 +33,8 @@ class MissingLanguageModelError(Exception):
 
 
 class GenderFlipper:
-    def __init__(self, language_file='language_models/english.txt'):
+    def __init__(self, language_file='language_models/english'):
+        # inflect_engine = inflect.engine()
         self.term_mapper = {}
         if not os.path.exists(language_file):
             raise MissingLanguageModelError(
@@ -55,13 +57,23 @@ class GenderFlipper:
                     self.term_mapper.update({term_0: term_1})
                     self.term_mapper.update({term_1: term_0})
 
-        # self.female_to_male = {female: male for male, female
-        #                        in self.male_to_female.items()}
+                    self.term_mapper.update(
+                        {pluralize(term_0): pluralize(term_1)}
+                    )
+                    self.term_mapper.update(
+                        {pluralize(term_1): pluralize(term_0)}
+                    )
+
+
 
     def flip_gender(self, text):
+        # Pad spaces at the ends since our current algorithm relies on findining
+        # non-letters to find word boundaries
+        text = ' ' + text + ' '
         idx = -1
         while idx < len(text):
             idx += 1
+            # print('Assessing: `{}...`'.format(text[idx:idx+10]))
             # from ipdb import set_trace; set_trace(context=21)
             # logging.info('idx %s / %s', idx, len(text))
             for term_0, term_1 in self.term_mapper.items():
@@ -73,14 +85,14 @@ class GenderFlipper:
                     test_text = ' ' + text[idx:]
                 match = re.match(regex, test_text, re.IGNORECASE)
                 if match:
-                    # from ipdb import set_trace; set_trace(context=21)
                     current_term = match.group(1)
                     term_1 = _copy_case(current_term, term_1)
                     logging.info('Replacing %s with %s', current_term, term_1)
                     text = text[:idx] + term_1 + text[idx+len(term_0):]
                     break
 
-        return text
+        # Strip the spaces we introduced at the beginning of function
+        return text.strip()
 
 
 def _copy_case(example_term, term):
