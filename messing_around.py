@@ -75,19 +75,19 @@ class GenderFlipper:
         # Pad spaces at the ends since our current algorithm relies on findining
         # non-letters to find word boundaries
         text = ' ' + text + ' '
-        idx = -1
+        idx = 0
         while idx < len(text):
             idx += 1
+            test_text = text[idx-1:]
+            if re.search('\A[a-zA-Z]', test_text):
+                # This is the middle of a word
+                continue
             # print('Assessing: `{}...`'.format(text[idx:idx+10]))
             # from ipdb import set_trace; set_trace(context=21)
             # logging.info('idx %s / %s', idx, len(text))
             for term_0, term_1 in self.term_mapper.items():
                 # from ipdb import set_trace; set_trace(context=21)
                 regex = '[^a-zA-Z]({})[^a-zA-Z]'.format(re.escape(term_0))
-                if idx > 0:
-                    test_text = text[idx-1:]
-                else:
-                    test_text = ' ' + text[idx:]
                 match = re.match(regex, test_text, re.IGNORECASE)
                 if match:
                     current_term = match.group(1)
