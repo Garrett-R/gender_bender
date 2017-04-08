@@ -10,6 +10,7 @@ from ebooklib import epub
 import gender_guesser.detector as gender
 from pluralize import pluralize
 import spacy
+from termcolor import colored
 from titlecase import titlecase
 
 logging.basicConfig(level=logging.INFO)  # TODO Why does this not work??
@@ -90,35 +91,37 @@ class GenderFlipper:
         idx = 0
         while idx < len(text) - 1:
             idx += 1
-            if re.match('[a-zA-Z]', text[idx-1]):
+            if re.match('[a-zA-Z\']', text[idx-1]):
                 # This is the middle of a word
                 continue
-            if not re.match('[a-zA-Z]', text[idx]):  # TODO: better regex symbol than this a-zA-Z business?
+            if not re.match('[a-zA-Z\']', text[idx]):  # TODO: better regex symbol than this a-zA-Z business?
                 # Not the beginning of a word
                 continue
             remaining_text = text[idx:]
             # if re.search('\A[a-zA-Z]', test_text):
             #     # This is the middle of a word
             #     continue
-            term = re.split('[^a-zA-Z]', remaining_text, 1)[0]
-            target_term = term.lower()
+            term = re.split('[^a-zA-Z\']', remaining_text, 1)[0]
+            # Prevent something like `queen's` from being considered a single
+            # word
+            term = str(self._nlp(term)[0])
 
             # print('Assessing: `{}...`'.format(term))
             # from ipdb import set_trace; set_trace(context=21)
             # logging.info('idx %s / %s', idx, len(text))
-            if target_term in self._term_mapper:
-                replacement = self._term_mapper[target_term]
+            if term.lower() in self._term_mapper:
+                replacement = self._term_mapper[term.lower()]
                 replacement = _copy_case(term, replacement)
-                logging.info('Replacing %s with %s', term, replacement)
-                text = text[:idx] + replacement + text[idx+len(target_term):]
+                logging.debug('Replacing %s with %s', term, replacement)
+                text = text[:idx] + replacement + text[idx+len(term):]
                 continue
 
             #####  Flip names ######
             new_name = self.flip_name(text, idx, term)
             if new_name is not None:
                 new_name = _copy_case(term, new_name)
-                logging.info('Replacing name: %s with %s', term, new_name)
-                text = text[:idx] + new_name + text[idx+len(target_term):]
+                logging.debug('Replacing name: %s with %s', term, new_name)
+                text = text[:idx] + new_name + text[idx+len(term):]
                 continue
 
 
@@ -138,7 +141,8 @@ class GenderFlipper:
                                      self._is_proper_noun(text, idx, term))):
 
             if term not in self._name_mapper:
-                input_ = self._get_new_name_from_user(titlecase(term))
+                context = text[idx-40:idx+40]
+                input_ = _get_new_name_from_user(term, context)
                 if input_ == 'n':
                     self._not_names.add(term)
                     return None
@@ -146,19 +150,6 @@ class GenderFlipper:
 
             return self._name_mapper[term]
         return None
-
-
-    @staticmethod
-    def _get_new_name_from_user(old_name):
-        # TODO: give context and highlight name with color
-        while True:
-            input_ = input('Select new name for: {}\n'
-                           '(not a first name=n) '.format(old_name))
-            if (input_ != 'n' and len(input_) < 2) or input_.isspace():
-                print('You must input a valid name')
-                continue
-
-            return input_
 
 
     def _is_proper_noun(self, text, idx, term):
@@ -169,6 +160,19 @@ class GenderFlipper:
             return False
 
         return term[0].isupper()
+
+
+def _get_new_name_from_user(old_name, context):
+    # TODO: suggest a alternative name
+    user_msg = context.replace(old_name, colored(old_name, 'red'))
+    while True:
+        input_ = input('Select new name for: {}\n'
+                       '(not a first name=n) '.format(user_msg))
+        if (input_ != 'n' and len(input_) < 2) or input_.isspace():
+            print('You must input a valid name')
+            continue
+
+        return input_
 
 
 def _copy_case(example_term, term):

@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from messing_around import GenderFlipper, _copy_case
+from mock import patch
 
+from messing_around import GenderFlipper, _copy_case, _get_new_name_from_user
 
+def empty_name_input(_0, _1):
+    return None
+
+@patch('messing_around._get_new_name_from_user', empty_name_input)
 class TestFlipGender(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -48,6 +53,12 @@ class TestFlipGender(unittest.TestCase):
         self.assertEqual(result, 'he was one of many first year students in '
                                  'the class')
 
+    def test_flip_word_with_apostrophe(self):
+        text = 'the Queen\'s got a picture of this island'
+
+        result = self.flipper.flip_gender(text)
+        self.assertEqual(result, 'the King\'s got a picture of this island')
+
 
 class TestCopyCase(unittest.TestCase):
     def test_lower_case(self):
@@ -67,7 +78,3 @@ class TestCopyCase(unittest.TestCase):
         result = _copy_case(example, 'hello')
 
         self.assertEqual(result, 'HELLO')
-
-
-if __name__ == '__main__':
-    pass
