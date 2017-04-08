@@ -30,7 +30,7 @@ def convert_ebook(input_path, out_path):
         try:
             content = item.content.decode()
         except UnicodeDecodeError:
-            logging.error('Decode Error on book item: {}', ii)
+            logging.error('Decode Error on book item: %s', ii)
             continue
         content = flipper.flip_gender(content)
         item.content = content.encode()
@@ -76,6 +76,10 @@ class GenderFlipper:
                     if not unidirectional:
                         self._term_mapper.update({term_1: term_0})
 
+                    # avoid `him = her` becoming `them = their`
+                    if pluralize(term_0) in {'them', 'their'}:
+                        continue
+
                     self._term_mapper.update(
                         {pluralize(term_0): pluralize(term_1)}
                     )
@@ -102,9 +106,13 @@ class GenderFlipper:
             #     # This is the middle of a word
             #     continue
             term = re.split('[^a-zA-Z\']', remaining_text, 1)[0]
+            # print(term)
+            # from ipdb import set_trace; set_trace(context=21)
             # Prevent something like `queen's` from being considered a single
             # word
             term = str(self._nlp(term)[0])
+            # if term.endswith('\'s'):
+            #     term = term.strip('\'s')
 
             # print('Assessing: `{}...`'.format(term))
             # from ipdb import set_trace; set_trace(context=21)

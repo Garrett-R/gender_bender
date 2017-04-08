@@ -59,6 +59,18 @@ class TestFlipGender(unittest.TestCase):
         result = self.flipper.flip_gender(text)
         self.assertEqual(result, 'the King\'s got a picture of this island')
 
+    def test_his(self):
+        text = 'the boy glanced over his shoulder'
+
+        result = self.flipper.flip_gender(text)
+        self.assertEqual(result, 'the girl glanced over her shoulder')
+
+    def test_no_change(self):
+        text = 'A column of spray wetted them.'
+
+        result = self.flipper.flip_gender(text)
+        self.assertEqual(result, text)
+
 
 class TestCopyCase(unittest.TestCase):
     def test_lower_case(self):
