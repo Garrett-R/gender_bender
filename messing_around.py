@@ -25,8 +25,12 @@ def convert_ebook(input_path, out_path):
     flipper = GenderFlipper()
 
     for ii, item in enumerate(book.items):
-        logging.info('Working on item {}/{}'.format(ii+1, len(book.items)))
-        content = item.content.decode()
+        logging.info('Working on item {}/{}'.format(ii, len(book.items)-1))
+        try:
+            content = item.content.decode()
+        except UnicodeDecodeError:
+            logging.error('Decode Error on book item: {}', ii)
+            continue
         content = flipper.flip_gender(content)
         item.content = content.encode()
 
