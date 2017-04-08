@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from messing_around import GenderFlipper
+from messing_around import GenderFlipper, _copy_case
 
 
 class TestFlipGender(unittest.TestCase):
@@ -45,7 +45,29 @@ class TestFlipGender(unittest.TestCase):
         text = 'she was one of many freshmen in the class'
 
         result = self.flipper.flip_gender(text)
-        self.assertEqual(result, 'she was one of many first year students in '
+        self.assertEqual(result, 'he was one of many first year students in '
                                  'the class')
 
 
+class TestCopyCase(unittest.TestCase):
+    def test_lower_case(self):
+        example = 'bonjour'
+        result = _copy_case(example, 'hello')
+
+        self.assertEqual(result, 'hello')
+
+    def test_mixed_case(self):
+        example = 'Bonjour'
+        result = _copy_case(example, 'hello')
+
+        self.assertEqual(result, 'Hello')
+
+    def test_all_caps(self):
+        example = 'BONJOUR'
+        result = _copy_case(example, 'hello')
+
+        self.assertEqual(result, 'HELLO')
+
+
+if __name__ == '__main__':
+    pass
