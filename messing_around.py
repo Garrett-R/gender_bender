@@ -69,8 +69,6 @@ class GenderFlipper:
                             {pluralize(term_1): pluralize(term_0)}
                         )
 
-
-
     def flip_gender(self, text):
         # Pad spaces at the ends since our current algorithm relies on findining
         # non-letters to find word boundaries
