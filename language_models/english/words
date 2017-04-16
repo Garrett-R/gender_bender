@@ -4,6 +4,7 @@ him = her
 himself = herself
 
 masculine = effeminate, feminine
+masculinity = femininity
 male = female
 manly = womanly
 unmanly = unwomanly
@@ -11,6 +12,8 @@ emasculate = defeminize
 masculism = feminism
 masculist = feminist
 misandry = misogyny
+androphilia = gynephilia
+androphilic = gynephilic
 
 mr = mrs, miss, ms
 monsieur = mademoiselle, madame
@@ -18,9 +21,14 @@ señor = señorita, señora
 
 dad = mom
 father = mother
-grandfather = grandmother
+papa = mama
+pa = ma
+granddad, grandfather = grandmother
+grandpa = grandma
+gramps = granny
+
 nephew = niece
-uncle = aunt
+uncle = auntie, aunt
 brother = sister
 husband = wife
 groom = bride
@@ -101,7 +109,6 @@ foreman, forewoman => foreperson
 fisherman, fisherwoman => fisher
 stewardess => attendant
 alderman => council person
-actress => actor
 stewardess => attendant
 airman, airwoman => pilot
 alderman => council member
