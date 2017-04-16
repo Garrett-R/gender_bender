@@ -7,7 +7,7 @@ import os
 import re
 
 from ebooklib import epub
-import gender_guesser.detector as gender
+import gender_guesser.detector as gender_detector
 from pluralize import pluralize
 import spacy
 from termcolor import colored
@@ -44,17 +44,36 @@ class MissingLanguageModelError(Exception):
     pass
 
 
+# TODO: break into NameFlipper and WordFlipper?
 class GenderFlipper:
-    def __init__(self, language_file='language_models/english'):
+    def __init__(self, language_model='english'):
+        self._gender_detector = gender_detector.Detector()
         self._name_mapper = {}
         self._not_names = set()
         self._nlp = spacy.load('en')
         self._term_mapper = {}
-        if not os.path.exists(language_file):
+        model_dir = 'language_models'
+        female_file = os.path.join(model_dir, language_model, 'female_names')
+        if not os.path.exists(female_file):
             raise MissingLanguageModelError(
-                'Non-existent language model: "{}"'.format(language_file)
+                'Non-existent female name file: "{}"'.format(female_file)
             )
-        with open(language_file) as fo:
+        male_file = os.path.join(model_dir, language_model, 'male_names')
+        if not os.path.exists(male_file):
+            raise MissingLanguageModelError(
+                'Non-existent male name file: "{}"'.format(male_file)
+            )
+        with open(female_file) as fo:
+            self._female_names = [name.strip() for name in fo.readlines()]
+        with open(male_file) as fo:
+            self._male_names = [name.strip() for name in fo.readlines()]
+
+        word_file = os.path.join(model_dir, language_model, 'words')
+        if not os.path.exists(word_file):
+            raise MissingLanguageModelError(
+                'Non-existent word file: "{}"'.format(word_file)
+            )
+        with open(word_file) as fo:
             for line in fo:
                 # logging.debug('language file line: %s', line)
                 if re.match(' *#', line) or re.match(' *\n\Z', line):
@@ -138,7 +157,6 @@ class GenderFlipper:
         # Strip the spaces we introduced at the beginning of function
         return text.strip()
 
-
     def flip_name(self, text, idx, term):
         if term[0].islower() or term in self._not_names:
             return None
@@ -150,17 +168,59 @@ class GenderFlipper:
 
             if term not in self._name_mapper:
                 context = text[idx-40:idx+40]
-                input_ = _get_new_name_from_user(term, context)
+                orig_gender = self._gender_detector.get_gender(titlecase(term))
+                print('name: {} identified as: {}'.format(term, orig_gender))
+                # for `mostly_female`/`mostly_male`, we'll just treat it as
+                # `female`/`male`.
+                orig_gender = orig_gender.lstrip('mostly_')
+                if orig_gender == 'andy':
+                    # androgynous name, so it can map to itself
+                    suggested_name = term
+                elif orig_gender == 'unknown':
+                    suggested_name = None
+                else:
+                    suggested_name = self._generate_suggested_name(term, orig_gender)
+                input_ = _get_new_name_from_user(term, context, suggested_name)
+                # TODO: this logic belongs in the above function, not here
                 if input_ == 'n':
                     self._not_names.add(term)
                     return None
-                self._name_mapper[term] = input_
+                elif input_ == 's':
+                    name = suggested_name
+                else:
+                    name = input_
+                self._name_mapper[term] = name
 
             return self._name_mapper[term]
         return None
 
+    def _generate_suggested_name(self, orig_name, orig_gender):  # remove default arg
+        """Chooses a name from the opposite gender with the largest common
+        prefix.
 
-    def _is_proper_noun(self, text, idx, term):
+        :param str orig_gender: Either `female` or `male`
+        :return: the suggested name
+        """
+        orig_name = orig_name.lower()
+        if orig_gender == 'female':
+            names = self._male_names
+        else:
+            names = self._female_names
+        suggested_name = None
+        for num_chars in range(1, len(orig_name)):
+            for name in names:
+                if name.startswith(orig_name[:num_chars]):
+                    suggested_name = titlecase(name)
+                    break
+            else:
+                # Ok, there's no better match, so we take the last match
+                break
+
+        return suggested_name
+
+
+    @staticmethod
+    def _is_proper_noun(text, idx, term):
         # TODO: need to improve this...
         is_start_of_sentence = not re.search('[a-zA-Z)(][ \n\t]*\Z', text[:idx])
         if is_start_of_sentence:
@@ -170,13 +230,23 @@ class GenderFlipper:
         return term[0].isupper()
 
 
-def _get_new_name_from_user(old_name, context):
-    # TODO: suggest a alternative name
-    user_msg = context.replace(old_name, colored(old_name, 'red'))
+def _get_new_name_from_user(old_name, context, suggested_name):
+    # TODO: suggest multiple options for the name
+    colored_context = context.replace(old_name, colored(old_name, 'red'))
+    if suggested_name is None:
+        colored_suggestion = 'N/A'
+    else:
+        colored_suggestion = colored(suggested_name, 'green')
+
     while True:
-        input_ = input('Select new name for: {}\n'
-                       '(not a first name=n) '.format(user_msg))
-        if (input_ != 'n' and len(input_) < 2) or input_.isspace():
+        input_ = input(
+            '-------------------------------------\n'
+            'Select new name for: {}   \n'
+            '(suggestion: {})\n'
+            '(not a first name=n, use suggested name=s) '
+            ''.format(colored_context, colored_suggestion)
+        )
+        if (input_ not in {'n', 's'} and len(input_) < 2) or input_.isspace():
             print('You must input a valid name')
             continue
 
