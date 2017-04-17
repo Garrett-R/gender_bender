@@ -1,10 +1,24 @@
 ## Gender Bender
 
-You can flip the gender of or a string or eBook (only works with the epub format).  The motivation was to be able to examine gender norms in a fun way.
+This library allows you to flip the gender of or a string or eBook (only works with the `epub` format).  The motivation was to be able to examine gender norms in a fun way.
 
-To use the `epub` format, I recommend the open-source Calibre reader or the Kobo. 
+To use the `epub` format, I recommend the Calibre reader or the Kobo. 
 
-The script will need help flipping the names (but will provide a suggestion each time for conevenience).
+### Book collection
+
+**TODO**
+
+The script has been run on these books already, found in the examples directory:
+
+> Olivia Twist
+> Of Mice and Women
+> Charlie's Web
+> John Eyre
+> Danielle Copperfield
+> Dawn Quixote
+> Bob's Adventures in Wonderland
+> Francinestein / Fannystein / Francescastein
+
 
 ### Usage
 _Python 3 only_
@@ -35,6 +49,8 @@ You can also gender-bend a string:
 from gender_bender import gender_bend
 gender_bend('I suffer not a woman to teach, nor to usurp authority over the man, but to be in silence.')
 ```
+
+Note: The script will need help flipping the names (but will provide a suggestion each time for conevenience).
 
 ### TODO
 
