@@ -10,14 +10,14 @@ To use the `epub` format, I recommend the Calibre reader or the Kobo.
 
 The script has been run on these books already, found in the examples directory:
 
-> Olivia Twist
-> Of Mice and Women
-> Charlie's Web
-> John Eyre
-> Danielle Copperfield
-> Dawn Quixote
-> Bob's Adventures in Wonderland
-> Francinestein / Fannystein / Francescastein
+- Olivia Twist
+- Of Mice and Women
+- Charlie's Web
+- John Eyre
+- Danielle Copperfield
+- Dawn Quixote
+- Bob's Adventures in Wonderland
+- Francescastein
 
 
 ### Usage
