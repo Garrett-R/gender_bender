@@ -51,7 +51,7 @@ You can also gender-bend a string:
 from gender_bender import gender_bend
 x = gender_bend("If Ivanka weren't my daughter, perhaps I'd be dating her.")
 
-assert x == 'If Ivan weren't my son, perhaps I'd be dating him.'
+assert x == "If Ivan weren't my son, perhaps I'd be dating him."
 ```
 
 Note: The script will need help flipping the names (but will provide a suggestion each time for conevenience).
