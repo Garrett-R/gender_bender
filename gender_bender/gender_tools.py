@@ -130,6 +130,7 @@ class _GenderBender:
             if not re.match('[a-zA-Z\']', text[idx]):  # TODO: better regex symbol than this a-zA-Z business?
                 # Not the beginning of a word
                 continue
+
             remaining_text = text[idx:]
             # if re.search('\A[a-zA-Z]', test_text):
             #     # This is the middle of a word
@@ -143,7 +144,7 @@ class _GenderBender:
             # if term.endswith('\'s'):
             #     term = term.strip('\'s')
 
-            # print('Assessing: `{}...`'.format(term))
+            # print('Assessing: `{}`'.format(term))
             # from ipdb import set_trace; set_trace(context=21)
             # logging.info('idx %s / %s', idx, len(text))
             if term.lower() in self._term_mapper:

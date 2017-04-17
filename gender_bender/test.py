@@ -3,39 +3,37 @@ import unittest
 
 from mock import patch
 
-from messing_around import GenderFlipper, _copy_case, _get_new_name_from_user
+from gender_bender.gender_tools import (_copy_case, gender_bend,
+                                        _get_new_name_from_user)
 
 def empty_name_input(_0, _1):
     return None
 
-@patch('messing_around._get_new_name_from_user', empty_name_input)
+@patch('gender_bender.gender_tools._get_new_name_from_user', empty_name_input)
 class TestFlipGender(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.flipper = GenderFlipper()
 
     def test_flip_back_and_forth(self):
         text = 'himself did not know herself.'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, 'herself did not know himself.')
 
     def test_preserves_case(self):
         text = 'himself did not know Herself.'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, 'herself did not know Himself.')
 
     def test_word_with_period(self):
         text = 'Mr. Jones is back!'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, 'Ms. Jones is back!')
 
     def test_plural(self):
         text = 'Attention Ladies and Gentlemen'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, 'Attention Gentlemen and Ladies')
 
     def test_unidirectional_flip(self):
@@ -43,33 +41,40 @@ class TestFlipGender(unittest.TestCase):
         # operates) so it is not flipped.
         text = 'The actor talked to the actress'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, 'The actor talked to the actor')
 
     def test_multi_word_replacement(self):
         text = 'she was one of many freshmen in the class'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, 'he was one of many first year students in '
                                  'the class')
 
     def test_flip_word_with_apostrophe(self):
         text = 'the Queen\'s got a picture of this island'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, 'the King\'s got a picture of this island')
 
     def test_his(self):
         text = 'the boy glanced over his shoulder'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, 'the girl glanced over her shoulder')
 
     def test_no_change(self):
         text = 'A column of spray wetted them.'
 
-        result = self.flipper.flip_gender(text)
+        result = gender_bend(text)
         self.assertEqual(result, text)
+
+    def test_basic(self):
+        text = 'If she weren\'t my daughter, perhaps I\'d be dating her.'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'If he weren\'t my son, perhaps I\'d be '
+                                 'dating him.')
 
 
 class TestCopyCase(unittest.TestCase):
