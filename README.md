@@ -11,7 +11,7 @@ _Python 3 only_
 
 Get the repo:
 
-```bash
+```
 git clone https://github.com/Garrett-R/gender_bender.git
 cd gender_bender
 ```
