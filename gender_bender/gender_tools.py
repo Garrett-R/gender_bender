@@ -16,29 +16,38 @@ from gender_bender.pluralize import pluralize
 
 logging.basicConfig(level=logging.INFO)  # TODO Why does this not work??  Move into __init__.py
 
-def convert_example_str():
-    text = 'sat on the rocky ledge, and watched Ralph\'s green and white body enviously'
-    flipper = GenderFlipper()
-    flipped_text = flipper.flip_gender(text)
-    print(flipped_text)
+# lazy-loaded singleton that's responsible for all the work
+_flipper = None
 
-def convert_ebook(input_path, out_path):
+
+def gender_bend(text):
+    global _flipper
+    if _flipper is None:
+        logging.info('Initializing gender flipping object')
+        _flipper = _GenderBender()
+
+    return _flipper.flip_gender(text)
+
+
+def gender_bend_epub(input_path, output_path=None):
+    if output_path is None:
+        base, ext = os.path.splitext(output_path)
+        output_path = '{}_gender_bent{}'.format(base, ext)
     book = epub.read_epub(input_path)
-    flipper = GenderFlipper()
 
     for ii, item in enumerate(book.items):
-        logging.info('Working on item {}/{}'.format(ii, len(book.items)-1))
+        logging.info('Working on epub item {}/{}'.format(ii, len(book.items)-1))
         try:
             content = item.content.decode()
         except UnicodeDecodeError:
             logging.error('Decode Error on book item: %s', ii)
             continue
-        content = flipper.flip_gender(content)
+        content = gender_bend(content)
         item.content = content.encode()
 
     # Strangely, when I write it back out, it loses it center styling (at least for
     # the oliver twist ePub.  This happens even if I don't modify it at all.
-    epub.write_epub(out_path, book)
+    epub.write_epub(output_path, book)
 
 
 class MissingLanguageModelError(Exception):
@@ -46,7 +55,7 @@ class MissingLanguageModelError(Exception):
 
 
 # TODO: break into NameFlipper and WordFlipper?
-class GenderFlipper:
+class _GenderBender:
     def __init__(self, language_model='english'):
         self._gender_detector = gender_detector.Detector()
         self._name_mapper = {}
@@ -195,7 +204,7 @@ class GenderFlipper:
             return self._name_mapper[term]
         return None
 
-    def _generate_suggested_name(self, orig_name, orig_gender):  # remove default arg
+    def _generate_suggested_name(self, orig_name, orig_gender):
         """Chooses a name from the opposite gender with the largest common
         prefix.
 
@@ -260,8 +269,3 @@ def _copy_case(example_term, term):
     if all(char.isupper() for char in example_term):
         term = term.upper()
     return term
-
-
-if __name__ == '__main__':
-    # convert_example_str()
-    convert_ebook('Lord_of_the_Flies.epub', 'Lady_of_the_Flies.epub')
