@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import argparse
 import itertools
 import logging
 import os
@@ -8,12 +7,14 @@ import re
 
 from ebooklib import epub
 import gender_guesser.detector as gender_detector
-from pluralize import pluralize
 import spacy
 from termcolor import colored
 from titlecase import titlecase
 
-logging.basicConfig(level=logging.INFO)  # TODO Why does this not work??
+from gender_bender.pluralize import pluralize
+
+
+logging.basicConfig(level=logging.INFO)  # TODO Why does this not work??  Move into __init__.py
 
 def convert_example_str():
     text = 'sat on the rocky ledge, and watched Ralph\'s green and white body enviously'
@@ -52,7 +53,7 @@ class GenderFlipper:
         self._not_names = set()
         self._nlp = spacy.load('en')
         self._term_mapper = {}
-        model_dir = 'language_models'
+        model_dir = os.path.join('gender_bender', 'language_models')
         female_file = os.path.join(model_dir, language_model, 'female_names')
         if not os.path.exists(female_file):
             raise MissingLanguageModelError(
