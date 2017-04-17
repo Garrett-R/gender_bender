@@ -171,11 +171,17 @@ class _GenderBender:
     def flip_name(self, text, idx, term):
         if term[0].islower() or term in self._not_names:
             return None
-
+        # We try a couple different ways to identify if this is a name, since
+        # none work perfectly.  Note: false negatives (missing a true name) is
+        # much worse than a false positive (thinking a non-name word is name)
+        # TODO: Our name detection is still poor... spaCy doesn't work well,
+        # should I just get a huge list of names for this purpose?
         doc = self._nlp(term)
         ent_type = doc[0].ent_type_
-        if (ent_type == 'PERSON' or (ent_type is None and
-                                     self._is_proper_noun(text, idx, term))):
+        if (ent_type == 'PERSON'
+            or term.lower() in self._male_names
+            or term.lower() in self._female_names
+            or (ent_type is None and self._is_proper_noun(text, idx, term))):
 
             if term not in self._name_mapper:
                 context = text[idx-40:idx+40]

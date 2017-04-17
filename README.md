@@ -29,6 +29,7 @@ Get the repo:
 ```bash
 git clone https://github.com/Garrett-R/gender_bender.git
 cd gender_bender
+pip install -r requirements.txt
 ```
 
 It can be run as a script:

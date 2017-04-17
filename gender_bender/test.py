@@ -3,13 +3,17 @@ import unittest
 
 from mock import patch
 
-from gender_bender.gender_tools import (_copy_case, gender_bend,
-                                        _get_new_name_from_user)
+from gender_bender.gender_tools import _copy_case, gender_bend
 
-def empty_name_input(_0, _1):
-    return None
+def mock_get_new_name_from_user(_0, _1, suggested_name):
+    # Note: the downside of just returning the suggested_name is that if we
+    # update the name list and the suggested name changes, we may have to update
+    # some tests.
+    return suggested_name
 
-@patch('gender_bender.gender_tools._get_new_name_from_user', empty_name_input)
+
+@patch('gender_bender.gender_tools._get_new_name_from_user',
+       mock_get_new_name_from_user)
 class TestFlipGender(unittest.TestCase):
 
     def test_flip_back_and_forth(self):
@@ -70,11 +74,18 @@ class TestFlipGender(unittest.TestCase):
         self.assertEqual(result, text)
 
     def test_basic(self):
-        text = 'If she weren\'t my daughter, perhaps I\'d be dating her.'
+        text = 'If Ivanka weren\'t my daughter, perhaps I\'d be dating her.'
 
         result = gender_bend(text)
-        self.assertEqual(result, 'If he weren\'t my son, perhaps I\'d be '
+        self.assertEqual(result, 'If Ivan weren\'t my son, perhaps I\'d be '
                                  'dating him.')
+
+    def test_simon(self):
+        text = 'Simon, walking in front of Ralph, felt a flicker of incredulity'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'Simone, walking in front of Rachael, felt a '
+                                 'flicker of incredulity')
 
 
 class TestCopyCase(unittest.TestCase):
