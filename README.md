@@ -1,6 +1,6 @@
 ## Gender Bender
 
-This library allows you to flip the gender of or a string or eBook (only works with the `epub` format).  The motivation was to be able to examine gender norms in a fun way.
+This library allows you to flip the gender of a string or eBook (only works with the `epub` format).  The motivation was to be able to examine gender norms in a fun way.
 
 To use the `epub` format, I recommend the Calibre reader or the Kobo. 
 
@@ -42,7 +42,7 @@ Or from python:
 
 ```python
 from gender_bender import gender_bend_epub
-gender_bend_epub('./Mythcial_Man_Month.epub')
+gender_bend_epub('./Mythical_Man_Month.epub')
 ```
 
 You can also gender-bend a string:
