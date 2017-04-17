@@ -11,14 +11,14 @@ _Python 3 only_
 
 Get the repo:
 
-```
+```bash
 git clone https://github.com/Garrett-R/gender_bender.git
 cd gender_bender
 ```
 
 It can be run as a script:
 
-```python
+```bash
 ./main.py --input Lord_of_the_Flies.epub  --output Lady_of_the_Flies.epub
 ```
 
