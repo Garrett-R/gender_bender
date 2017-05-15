@@ -87,6 +87,18 @@ class TestFlipGender(unittest.TestCase):
         self.assertEqual(result, 'Simone, walking in front of Rachael, felt a '
                                  'flicker of incredulity')
 
+    def test_third_person_singular_declensions_0(self):
+        text = 'her last drop was for her'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'his last drop was for him')
+
+    def test_third_person_singular_declensions_1(self):
+        text = 'By her own hand was her sword crafted for her'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'By his own hand was his sword crafted for him')
+
 
 class TestCopyCase(unittest.TestCase):
     def test_lower_case(self):
