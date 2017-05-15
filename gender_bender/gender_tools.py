@@ -169,7 +169,8 @@ class _GenderBender:
         return text.strip()
 
     def flip_name(self, text, idx, term):
-        if term[0].islower() or term in self._not_names:
+        # print(self._not_names)
+        if term[0].islower() or term.lower() in self._not_names:
             return None
         # We try a couple different ways to identify if this is a name, since
         # none work perfectly.  Note: false negatives (missing a true name) is
@@ -183,32 +184,35 @@ class _GenderBender:
             or term.lower() in self._female_names
             or (ent_type is None and self._is_proper_noun(text, idx, term))):
 
-            if term not in self._name_mapper:
+            lterm = term.lower()
+
+            if lterm.lower() not in self._name_mapper:
                 context = text[idx-40:idx+40]
-                orig_gender = self._gender_detector.get_gender(titlecase(term))
+                orig_gender = self._gender_detector.get_gender(titlecase(lterm))
                 print('name: {} identified as: {}'.format(term, orig_gender))
                 # for `mostly_female`/`mostly_male`, we'll just treat it as
                 # `female`/`male`.
                 orig_gender = orig_gender.lstrip('mostly_')
                 if orig_gender == 'andy':
                     # androgynous name, so it can map to itself
-                    suggested_name = term
+                    suggested_name = lterm
                 elif orig_gender == 'unknown':
                     suggested_name = None
                 else:
-                    suggested_name = self._generate_suggested_name(term, orig_gender)
+                    suggested_name = self._generate_suggested_name(lterm,
+                                                                   orig_gender)
                 input_ = _get_new_name_from_user(term, context, suggested_name)
                 # TODO: this logic belongs in the above function, not here
                 if input_ == 'n':
-                    self._not_names.add(term)
+                    self._not_names.add(lterm)
                     return None
                 elif input_ == 's':
                     name = suggested_name
                 else:
                     name = input_
-                self._name_mapper[term] = name
+                self._name_mapper[lterm] = name.lower()
 
-            return self._name_mapper[term]
+            return self._name_mapper[lterm]
         return None
 
     def _generate_suggested_name(self, orig_name, orig_gender):
@@ -218,7 +222,6 @@ class _GenderBender:
         :param str orig_gender: Either `female` or `male`
         :return: the suggested name
         """
-        orig_name = orig_name.lower()
         if orig_gender == 'female':
             names = self._male_names
         else:
@@ -259,9 +262,10 @@ def _get_new_name_from_user(old_name, context, suggested_name):
         input_ = input(
             '-------------------------------------\n'
             'Select new name for: {}   \n'
+            'Context: {}\n'
             '(suggestion: {})\n'
-            '(not a first name=n, use suggested name=s) '
-            ''.format(colored_context, colored_suggestion)
+            '(no translation=n, use suggested name=s) '
+            ''.format(colored(old_name, 'red'), colored_context, colored_suggestion)
         )
         if (input_ not in {'n', 's'} and len(input_) < 2) or input_.isspace():
             print('You must input a valid name')
