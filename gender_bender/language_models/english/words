@@ -1,5 +1,6 @@
 he = she
 his = her
+his = hers
 him = her
 himself = herself
 
@@ -105,7 +106,7 @@ spokesman = spokeswoman
 statesman = stateswoman
 
 ########  Words that have a feminine form, and a masculine/feminine form ################
-# The reason we can't translate `actor` to `actress` is that `actor` is ambiguous 
+# The reason we can't translate `actor` to `actress` is that `actor` is ambiguous
 #########################################################################################
 actress => actor
 waitress => waitor

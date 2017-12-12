@@ -61,12 +61,6 @@ class TestFlipGender(unittest.TestCase):
         result = gender_bend(text)
         self.assertEqual(result, 'the King\'s got a picture of this island')
 
-    def test_his(self):
-        text = 'the boy glanced over his shoulder'
-
-        result = gender_bend(text)
-        self.assertEqual(result, 'the girl glanced over her shoulder')
-
     def test_no_change(self):
         text = 'A column of spray wetted them.'
 
@@ -98,6 +92,30 @@ class TestFlipGender(unittest.TestCase):
 
         result = gender_bend(text)
         self.assertEqual(result, 'By his own hand was his sword crafted for him')
+
+    def test_third_person_singular_declensions_2(self):
+        text = 'It was created by her very quickly'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'It was created by him very quickly')
+
+    def test_third_person_singular_declensions_3(self):
+        text = 'It was created by her very own child'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'It was created by his very own child')
+
+    def test_hers(self):
+        text = 'the sword is his'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'the sword is hers')
+
+    def test_his(self):
+        text = 'the boy glanced over his shoulder'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'the girl glanced over her shoulder')
 
 
 class TestCopyCase(unittest.TestCase):

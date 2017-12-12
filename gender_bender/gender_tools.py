@@ -124,10 +124,11 @@ class _GenderBender:
         idx = 0
         while idx < len(text) - 1:
             idx += 1
-            if re.match('[a-zA-Z\']', text[idx-1]):
+            WORD_CHAR_REGEX = 'a-zA-Z\''
+            if re.match('[{}]'.format(WORD_CHAR_REGEX), text[idx-1]):
                 # This is the middle of a word
                 continue
-            if not re.match('[a-zA-Z\']', text[idx]):  # TODO: better regex symbol than this a-zA-Z business?
+            if not re.match('[{}]'.format(WORD_CHAR_REGEX), text[idx]):  # TODO: better regex symbol than this a-zA-Z business?
                 # Not the beginning of a word
                 continue
 
@@ -135,12 +136,16 @@ class _GenderBender:
             # if re.search('\A[a-zA-Z]', test_text):
             #     # This is the middle of a word
             #     continue
-            term = re.split('[^a-zA-Z\']', remaining_text, 1)[0]
+            term = re.split('[^{}]'.format(WORD_CHAR_REGEX), remaining_text, 1)[0]
             # print(term)
             # from ipdb import set_trace; set_trace(context=21)
             # Prevent something like `queen's` from being considered a single
             # word
             term = str(self._nlp(term)[0])
+            preceeding_text = text[:idx]
+            previous_term = re.split('[^{}]'.format(WORD_CHAR_REGEX),
+                                     preceeding_text.strip())[-1]
+            following_phrase = re.split('[<>.]', text[idx+len(term):], 1)[0]
             # if term.endswith('\'s'):
             #     term = term.strip('\'s')
 
@@ -148,9 +153,7 @@ class _GenderBender:
             # from ipdb import set_trace; set_trace(context=21)
             # logging.info('idx %s / %s', idx, len(text))
             if term.lower() in self._term_mapper:
-                replacement = self._term_mapper[term.lower()]
-                replacement = _copy_case(term, replacement)
-                logging.debug('Replacing %s with %s', term, replacement)
+                replacement = self._get_replacement(term, following_phrase)
                 text = text[:idx] + replacement + text[idx+len(term):]
                 continue
 
@@ -163,7 +166,7 @@ class _GenderBender:
                 continue
 
 
-            # if self._is_proper_noun(text, idx, term)
+                # if self._is_proper_noun(text, idx, term)
 
         # Strip the spaces we introduced at the beginning of function
         return text.strip()
@@ -178,7 +181,7 @@ class _GenderBender:
         # TODO: Our name detection is still poor... spaCy doesn't work well,
         # should I just get a huge list of names for this purpose?
         doc = self._nlp(term)
-        ent_type = doc[0].ent_type_
+        ent_type = doc[0].ent_type_  # TODO: is this working??
         if (ent_type == 'PERSON'
             or term.lower() in self._male_names
             or term.lower() in self._female_names
@@ -238,16 +241,42 @@ class _GenderBender:
 
         return suggested_name
 
+    def _get_replacement(self, term, following_phrase):
+        replacement = self._term_mapper[term.lower()]
+        replacement = _copy_case(term, replacement)
+        if replacement == 'him' and self._is_genitive_declension(following_phrase):
+            replacement = 'his'
+        if replacement == 'hers' and self._is_genitive_declension(following_phrase):
+            replacement = 'her'
+        logging.debug('Replacing %s with %s', term, replacement)
+        return replacement
 
     @staticmethod
     def _is_proper_noun(text, idx, term):
         # TODO: need to improve this...
         is_start_of_sentence = not re.search('[a-zA-Z)(][ \n\t]*\Z', text[:idx])
+
         if is_start_of_sentence:
             # TODO: Poor assumption, but I'll improve this later
             return False
 
         return term[0].isupper()
+
+    def _is_genitive_declension(self, following_phrase):
+        doc = self._nlp(following_phrase)
+        for term in doc:
+            if term.pos_ in {'NOUN', 'DET'}:
+                # The "determiner" POS is because you can't have
+                # `... by her the dog ...`, you could have though,
+                # `... by her the quickest way possible ...`
+                return True
+            if term.pos_ in {'ADV', 'ADJ'}:
+                # Adjectives may preced the object, as in `
+                # ... by her very own mother ...`
+                continue
+            if term.pos_ in {'CCONJ'}:
+                # Ex: `... created by her very quickly and ...`
+                return False
 
 
 def _get_new_name_from_user(old_name, context, suggested_name):
@@ -280,3 +309,144 @@ def _copy_case(example_term, term):
     if all(char.isupper() for char in example_term):
         term = term.upper()
     return term
+
+
+
+
+
+
+# TODO: move this somewhere better
+EN_PREPOSITIONS = {
+    'aboard',
+    'about',
+    'above',
+    'absent',
+    'across',
+    'cross',
+    'after',
+    'against',
+    '\'gainst',
+    '\'gainst',
+    'again',
+    'gain',
+    'along',
+    '\'long',
+    'alongst',
+    'alongside',
+    'amid',
+    'amidst, mid, midst;',
+    'among',
+    'amongst',
+    '\'mong',
+    'mong',
+    '\'mongst',
+    'apropos',
+    'apud',
+    'around',
+    '\'round',
+    'round',
+    'as',
+    'astride',
+    'at',
+    '@',
+    'on',
+    'atop, ontop',
+    'bar',
+    'before',
+    'afore, tofore',
+    'B4',
+    'behind',
+    'ahind',
+    'below',
+    'ablow, allow',
+    'beneath',
+    '\'neath',
+    'neath',
+    'beside',
+    'besides',
+    'between',
+    'atween',
+    'beyond',
+    'ayond',
+    'but',
+    'by',
+    'chez',
+    'circa',
+    'come',
+    'dehors',
+    'despite',
+    'spite',
+    'down',
+    'during',
+    'except',
+    'for',
+    '4',
+    'from',
+    'in',
+    'inside',
+    'into',
+    'less',
+    'like',
+    'minus',
+    'near',
+    'nearer',
+    'nearest',
+    'anear',
+    'notwithstanding',
+    'of',
+    'o\'',
+    'off',
+    'on',
+    'onto',
+    'opposite',
+    'out',
+    'outen',
+    'outside',
+    'over',
+    'o\'er',
+    'pace',
+    'past',
+    'per',
+    'post',
+    'pre',
+    'pro',
+    'qua',
+    're',
+    'sans',
+    'save',
+    'sauf',
+    'short',
+    'since',
+    'sithence',
+    'than',
+    'through',
+    'thru',
+    'throughout',
+    'thruout',
+    'to',
+    '2',
+    'toward',
+    'towards',
+    'under',
+    'underneath',
+    'unlike',
+    'until',
+    '\'til',
+    'til',
+    'till',
+    'up',
+    'upon',
+    '\'pon',
+    'pon',
+    'upside',
+    'versus',
+    'vs.',
+    'v.',
+    'via',
+    'vice',
+    'vis-à-vis',
+    'with',
+    'within',
+    'without',
+    'worth',
+}

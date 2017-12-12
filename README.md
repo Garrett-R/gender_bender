@@ -13,7 +13,6 @@ The script has been run on these books already, found in the `examples` director
 - Olivia Twist
 - Of Mice and Women
 - Charlie's Web
-- John Eyre
 - Danielle Copperfield
 - Dawn Quixote
 - Bob's Adventures in Wonderland
