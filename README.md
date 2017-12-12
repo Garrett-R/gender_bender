@@ -53,7 +53,11 @@ x = gender_bend("If Ivanka weren't my daughter, perhaps I'd be dating her.")
 assert x == "If Ivan weren't my son, perhaps I'd be dating him."
 ```
 
-Note: The script will need help flipping the names (but will provide a suggestion each time for conevenience).
+If you'd like to choose the names yourself (recommended for translating a whole ebook), you can do:
+
+```python
+./main.py --input The_Little_Mermaid.epub --interactive-naming
+```
 
 ### TODO
 

@@ -20,16 +20,16 @@ logging.basicConfig(level=logging.INFO)  # TODO Why does this not work??  Move i
 _flipper = None
 
 
-def gender_bend(text):
+def gender_bend(text, interactive_naming=False):
     global _flipper
     if _flipper is None:
         logging.info('Initializing gender flipping object')
         _flipper = _GenderBender()
 
-    return _flipper.flip_gender(text)
+    return _flipper.flip_gender(text, interactive_naming)
 
 
-def gender_bend_epub(input_path, output_path=None):
+def gender_bend_epub(input_path, output_path=None, interactive_naming=False):
     if output_path is None:
         base, ext = os.path.splitext(output_path)
         output_path = '{}_gender_bent{}'.format(base, ext)
@@ -42,7 +42,7 @@ def gender_bend_epub(input_path, output_path=None):
         except UnicodeDecodeError:
             logging.error('Decode Error on book item: %s', ii)
             continue
-        content = gender_bend(content)
+        content = gender_bend(content, interactive_naming)
         item.content = content.encode()
 
     # Strangely, when I write it back out, it loses it center styling (at least for
@@ -117,7 +117,7 @@ class _GenderBender:
                             {pluralize(term_1): pluralize(term_0)}
                         )
 
-    def flip_gender(self, text):
+    def flip_gender(self, text, interactive_naming=False):
         # Pad spaces at the ends since our current algorithm relies on findining
         # non-letters to find word boundaries
         text = ' ' + text + ' '
@@ -143,8 +143,8 @@ class _GenderBender:
             # word
             term = str(self._nlp(term)[0])
             preceeding_text = text[:idx]
-            previous_term = re.split('[^{}]'.format(WORD_CHAR_REGEX),
-                                     preceeding_text.strip())[-1]
+            # previous_term = re.split('[^{}]'.format(WORD_CHAR_REGEX),
+            #                          preceeding_text.strip())[-1]
             following_phrase = re.split('[<>.]', text[idx+len(term):], 1)[0]
             # if term.endswith('\'s'):
             #     term = term.strip('\'s')
@@ -158,7 +158,7 @@ class _GenderBender:
                 continue
 
             #####  Flip names ######
-            new_name = self.flip_name(text, idx, term)
+            new_name = self.flip_name(text, idx, term, interactive_naming)
             if new_name is not None:
                 new_name = _copy_case(term, new_name)
                 logging.debug('Replacing name: %s with %s', term, new_name)
@@ -171,7 +171,7 @@ class _GenderBender:
         # Strip the spaces we introduced at the beginning of function
         return text.strip()
 
-    def flip_name(self, text, idx, term):
+    def flip_name(self, text, idx, term, interactive_naming=False):
         # print(self._not_names)
         if term[0].islower() or term.lower() in self._not_names:
             return None
@@ -204,15 +204,21 @@ class _GenderBender:
                 else:
                     suggested_name = self._generate_suggested_name(lterm,
                                                                    orig_gender)
-                input_ = _get_new_name_from_user(term, context, suggested_name)
-                # TODO: this logic belongs in the above function, not here
-                if input_ == 'n':
-                    self._not_names.add(lterm)
-                    return None
-                elif input_ == 's':
-                    name = suggested_name
+
+                if not interactive_naming and suggested_name is None:
+                    return term
+                if interactive_naming:
+                    input_ = _get_new_name_from_user(term, context, suggested_name)
+                    # TODO: this logic belongs in the above function, not here
+                    if input_ == 'n':
+                        self._not_names.add(lterm)
+                        return None
+                    elif input_ == 's':
+                        name = suggested_name
+                    else:
+                        name = input_
                 else:
-                    name = input_
+                    name = suggested_name
                 self._name_mapper[lterm] = name.lower()
 
             return self._name_mapper[lterm]

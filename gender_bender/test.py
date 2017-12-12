@@ -1,19 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from mock import patch
-
 from gender_bender.gender_tools import _copy_case, gender_bend
 
-def mock_get_new_name_from_user(_0, _1, suggested_name):
-    # Note: the downside of just returning the suggested_name is that if we
-    # update the name list and the suggested name changes, we may have to update
-    # some tests.
-    return suggested_name
-
-
-@patch('gender_bender.gender_tools._get_new_name_from_user',
-       mock_get_new_name_from_user)
 class TestFlipGender(unittest.TestCase):
 
     def test_flip_back_and_forth(self):
