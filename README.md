@@ -60,4 +60,4 @@ If you'd like to choose the names yourself (recommended for translating a whole 
 ### TODO
 
 - Is there some way to also examine other underrepresented groups like transsexuals?
-- Options for better automation of the name guessing
+
