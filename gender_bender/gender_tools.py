@@ -128,7 +128,7 @@ class _GenderBender:
             if re.match('[{}]'.format(WORD_CHAR_REGEX), text[idx-1]):
                 # This is the middle of a word
                 continue
-            if not re.match('[{}]'.format(WORD_CHAR_REGEX), text[idx]):  # TODO: better regex symbol than this a-zA-Z business?
+            if not re.match('[{}]'.format(WORD_CHAR_REGEX), text[idx]):
                 # Not the beginning of a word
                 continue
 
@@ -185,14 +185,14 @@ class _GenderBender:
         if (ent_type == 'PERSON'
             or term.lower() in self._male_names
             or term.lower() in self._female_names
-            or (ent_type is None and self._is_proper_noun(text, idx, term))):
+            or (not ent_type and self._is_proper_noun(text, idx, term))):
 
             lterm = term.lower()
 
             if lterm.lower() not in self._name_mapper:
                 context = text[idx-40:idx+40]
                 orig_gender = self._gender_detector.get_gender(titlecase(lterm))
-                print('name: {} identified as: {}'.format(term, orig_gender))
+                logging.debug('name: {} identified as: {}'.format(term, orig_gender))
                 # for `mostly_female`/`mostly_male`, we'll just treat it as
                 # `female`/`male`.
                 orig_gender = orig_gender.lstrip('mostly_')
@@ -266,7 +266,7 @@ class _GenderBender:
             # TODO: Poor assumption, but I'll improve this later
             return False
 
-        return term[0].isupper()
+        return term[0].isupper() and len(term[0]) > 1
 
     def _is_genitive_declension(self, following_phrase):
         doc = self._nlp(following_phrase)

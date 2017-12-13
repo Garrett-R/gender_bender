@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+from unittest import skip
 
 from gender_bender.gender_tools import _copy_case, gender_bend
 
@@ -117,6 +118,13 @@ class TestFlipGender(unittest.TestCase):
 
         result = gender_bend(text)
         self.assertEqual(result, 'the girl glanced over her shoulder')
+
+    @skip('TODO: get this working...')
+    def test_mrs(self):
+        text = 'Mrs. Copperfield'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'Mr. Copperfield')
 
 
 class TestCopyCase(unittest.TestCase):
