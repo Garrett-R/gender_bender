@@ -53,7 +53,7 @@ assert x == "If Ivan weren't my son, perhaps I'd be dating him."
 
 If you'd like to choose the names yourself (recommended for translating a whole ebook), you can do:
 
-```python
+```bash
 ./main.py --input The_Little_Mermaid.epub --interactive-naming
 ```
 
