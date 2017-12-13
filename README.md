@@ -6,8 +6,6 @@ To use the `epub` format, I recommend the Calibre reader or the Kobo.
 
 ### Book collection
 
-**TODO**
-
 The script has been run on these books already, found in the `examples` directory:
 
 - Olivia Twist

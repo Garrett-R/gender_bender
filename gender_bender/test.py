@@ -94,6 +94,18 @@ class TestFlipGender(unittest.TestCase):
         result = gender_bend(text)
         self.assertEqual(result, 'It was created by his very own child')
 
+    def test_third_person_singular_declensions_4(self):
+        text = 'it occurred to her that she ought to have wondered at this'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'it occurred to him that he ought to have wondered at this')
+
+    def test_his_capital(self):
+        text = 'His voice rose to a shriek of terror'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'Her voice rose to a shriek of terror')
+
     def test_hers(self):
         text = 'the sword is his'
 

@@ -23,7 +23,7 @@ _flipper = None
 def gender_bend(text, interactive_naming=False):
     global _flipper
     if _flipper is None:
-        logging.info('Initializing gender flipping object')
+        logging.debug('Initializing gender flipping object')
         _flipper = _GenderBender()
 
     return _flipper.flip_gender(text, interactive_naming)
@@ -36,7 +36,7 @@ def gender_bend_epub(input_path, output_path=None, interactive_naming=False):
     book = epub.read_epub(input_path)
 
     for ii, item in enumerate(book.items):
-        logging.info('Working on epub item {}/{}'.format(ii, len(book.items)-1))
+        logging.debug('Working on epub item {}/{}'.format(ii, len(book.items)-1))
         try:
             content = item.content.decode()
         except UnicodeDecodeError:
@@ -249,11 +249,11 @@ class _GenderBender:
 
     def _get_replacement(self, term, following_phrase):
         replacement = self._term_mapper[term.lower()]
-        replacement = _copy_case(term, replacement)
-        if replacement == 'him' and self._is_genitive_declension(following_phrase):
+        if replacement.lower() == 'him' and self._is_genitive_declension(following_phrase):
             replacement = 'his'
-        if replacement == 'hers' and self._is_genitive_declension(following_phrase):
+        if replacement.lower() == 'hers' and self._is_genitive_declension(following_phrase):
             replacement = 'her'
+        replacement = _copy_case(term, replacement)
         logging.debug('Replacing %s with %s', term, replacement)
         return replacement
 
@@ -280,8 +280,9 @@ class _GenderBender:
                 # Adjectives may preced the object, as in `
                 # ... by her very own mother ...`
                 continue
-            if term.pos_ in {'CCONJ'}:
+            if term.pos_ in {'CCONJ', 'ADP'}:
                 # Ex: `... created by her very quickly and ...`
+                # (ADP is also a conjunction)
                 return False
 
 
