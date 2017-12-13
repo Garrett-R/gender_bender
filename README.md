@@ -9,7 +9,6 @@ To use the `epub` format, I recommend the Calibre reader or the Kobo.
 The script has been run on these books already, found in the `examples` directory:
 
 - Olivia Twist
-- Of Mice and Women
 - Charlie's Web
 - Danielle Copperfield
 - Dawn Quixote
@@ -19,6 +18,7 @@ The script has been run on these books already, found in the `examples` director
 
 
 ### Usage
+
 _Python 3 only_
 
 Get the repo:
@@ -56,8 +56,4 @@ If you'd like to choose the names yourself (recommended for translating a whole 
 ```bash
 ./main.py --input The_Little_Mermaid.epub --interactive-naming
 ```
-
-### TODO
-
-- Is there some way to also examine other underrepresented groups like transsexuals?
 
