@@ -101,6 +101,54 @@ class TestFlipGender(unittest.TestCase):
         result = gender_bend(text)
         self.assertEqual(result, 'it occurred to him that he ought to have wondered at this')
 
+    @skip('TODO: get this working...')
+    def test_third_person_singular_declensions_5(self):
+        text = 'I have kept her waiting.'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'I have kept him waiting.')
+
+    @skip('TODO: get this working...')
+    def test_third_person_singular_declensions_6(self):
+        text = 'When the rabbit came near her, she began in a low, timid voice'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'When the rabbit came near him, he began in a low, timid voice')
+
+    @skip('TODO: get this working...')
+    def test_third_person_singular_declensions_7(self):
+        text = 'The cat seemed to her to wink.'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'The cat seemed to him to wink.')
+
+    @skip('TODO: get this working...')
+    def test_third_person_singular_declensions_8(self):
+        text = 'And sayig to her very earnestly, "blah blah"'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'And sayig to him very earnestly, "blah blah"')
+
+    def test_contraction(self):
+        text = 'She\'ll be there'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'He\'ll be there')
+
+    @skip('TODO: get this working...')
+    def test_contraction_with_name(self):
+        text = 'John\'ll be there'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'Johanna\'ll be there')
+
+    @skip('TODO: get this working...')
+    def test_miss(self):
+        text = 'I will miss you'
+
+        result = gender_bend(text)
+        self.assertEqual(result, text)
+
     def test_his_capital(self):
         text = 'His voice rose to a shriek of terror'
 
@@ -125,6 +173,7 @@ class TestFlipGender(unittest.TestCase):
 
         result = gender_bend(text)
         self.assertEqual(result, 'Mr. Copperfield')
+
 
 
 class TestCopyCase(unittest.TestCase):
