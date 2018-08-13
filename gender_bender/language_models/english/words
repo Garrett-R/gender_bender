@@ -117,7 +117,6 @@ foreman, forewoman => foreperson
 fisherman, fisherwoman => fisher
 stewardess => attendant
 alderman => council person
-stewardess => attendant
 airman, airwoman => pilot
 alderman => council member
 alumna, alumnus => graduate
@@ -189,7 +188,6 @@ temptress => tempter
 toastmistress => toast maker
 tribesman => tribe member
 usherette => usher
-waitress => waitor
 
 
 # TODO: this doesn't yet deal with multi word phrases :(
