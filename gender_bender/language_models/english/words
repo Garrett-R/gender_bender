@@ -112,7 +112,7 @@ statesman = stateswoman
 # The reason we can't translate `actor` to `actress` is that `actor` is ambiguous
 #########################################################################################
 actress => actor
-waitress => waitor
+waitress => waiter
 foreman, forewoman => foreperson
 fisherman, fisherwoman => fisher
 stewardess => attendant
