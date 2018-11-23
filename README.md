@@ -2,7 +2,7 @@
 
 This library allows you to flip the gender of a string or eBook (only works with the `epub` format).  The motivation was to be able to examine gender norms in a fun way.
 
-To use the `epub` format, I recommend the Calibre reader or the Kobo. 
+To use the `epub` format, I recommend the Calibre reader or the Kobo.
 
 ### Book collection
 
@@ -11,7 +11,7 @@ The script has been run on these books already, found in the `examples` director
 - Olivia Twist
 - Charlie's Web
 - Danielle Copperfield
-- Dawn Quixote
+- Doña Quixote
 - Bob's Adventures in Wonderland
 - Francescastein
 
