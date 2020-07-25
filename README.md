@@ -4,17 +4,6 @@ This library allows you to flip the gender of a string or eBook (only works with
 
 To use the `epub` format, I recommend the Calibre reader or the Kobo.
 
-### Book collection
-
-The script has been run on these books already, found in the `examples` directory:
-
-- Olivia Twist
-- Charlie's Web
-- Danielle Copperfield
-- Doña Quixote
-- Bob's Adventures in Wonderland
-- Francescastein
-
 
 
 ### Usage
@@ -56,4 +45,3 @@ If you'd like to choose the names yourself (recommended for translating a whole 
 ```bash
 ./main.py --input The_Little_Mermaid.epub --interactive-naming
 ```
-
