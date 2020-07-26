@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "gender-bender"
+version = "0.1.0"
+description = "Flips the gender in a text snippet or epub"
+authors = ["Garrett-R"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+EbookLib = "^0.17.1"
+en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.3.1/en_core_web_sm-2.3.1.tar.gz" }
+gender-guesser = "^0.4.0"
+spacy = "^2.3.2"
+termcolor = "^1.1.0"
+titlecase = "^1.1.1"
+
+[tool.poetry.dev-dependencies]
+mock = "^2.0.0"
+nose = "^1.3.7"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

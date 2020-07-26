@@ -2,7 +2,8 @@
 import unittest
 from unittest import skip
 
-from gender_bender.gender_tools import _copy_case, gender_bend
+from gender_bender import gender_bend
+from gender_bender.gender_tools import _copy_case
 
 class TestFlipGender(unittest.TestCase):
 

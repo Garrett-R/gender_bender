@@ -60,7 +60,16 @@ class _GenderBender:
         self._gender_detector = gender_detector.Detector()
         self._name_mapper = {}
         self._not_names = set()
-        self._nlp = spacy.load('en')
+
+        try:
+            self._nlp = spacy.load('en_core_web_sm')
+        except OSError:
+            print('Downloading language model for the spaCy POS tagger '
+                  '(don\'t worry, this will only happen once)')
+            from spacy.cli import download
+            download('en_core_web_sm')
+            self._nlp = spacy.load('en_core_web_sm')
+
         self._term_mapper = {}
         model_dir = os.path.join('gender_bender', 'language_models')
         female_file = os.path.join(model_dir, language_model, 'female_names')
