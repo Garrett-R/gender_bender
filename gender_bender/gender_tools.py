@@ -11,7 +11,7 @@ import spacy
 from termcolor import colored
 from titlecase import titlecase
 
-from gender_bender.pluralize import pluralize
+from .pluralize import pluralize
 
 
 logging.basicConfig(level=logging.INFO)  # TODO Why does this not work??  Move into __init__.py
