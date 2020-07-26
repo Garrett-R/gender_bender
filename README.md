@@ -4,25 +4,21 @@ This library allows you to flip the gender of a string or eBook (only works with
 
 To use the `epub` format, I recommend the Calibre reader or the Kobo.
 
-
-
-### Usage
+### Installation
 
 _Python 3 only_
 
-Get the repo:
-
-```bash
-git clone https://github.com/Garrett-R/gender_bender.git
-cd gender_bender
-pip install -r requirements.txt
+With `pip`:
+```shell script
+pip install gender-bender 
 ```
 
-It can be run as a script:
-
-```bash
-./main.py --input Lord_of_the_Flies.epub  --output Lady_of_the_Flies.epub
+or with `poetry`:
+```shell script
+poetry add gender-bender
 ```
+
+### Usage
 
 Or from python:
 
@@ -40,8 +36,24 @@ x = gender_bend("If Ivanka weren't my daughter, perhaps I'd be dating her.")
 assert x == "If Ivan weren't my son, perhaps I'd be dating him."
 ```
 
+### Installing from source
+
+Get the repo:
+
+```shell script
+git clone https://github.com/Garrett-R/gender_bender.git
+cd gender_bender
+pip install -r requirements.txt
+```
+
+It can be run as a script:
+
+```shell script
+./main.py --input Lord_of_the_Flies.epub  --output Lady_of_the_Flies.epub
+```
+
 If you'd like to choose the names yourself (recommended for translating a whole ebook), you can do:
 
-```bash
+```shell script
 ./main.py --input The_Little_Mermaid.epub --interactive-naming
 ```
