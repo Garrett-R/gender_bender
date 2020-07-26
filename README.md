@@ -18,6 +18,9 @@ or with `poetry`:
 poetry add gender-bender
 ```
 
+Note: on first usage, it will install an English model for the Spacy dependency.  This
+is unable to be installed from PyPI due to [this issue](https://github.com/explosion/spaCy/issues/3536).
+
 ### Usage
 
 Or from python:

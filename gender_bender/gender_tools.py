@@ -64,8 +64,10 @@ class _GenderBender:
         try:
             self._nlp = spacy.load('en_core_web_sm')
         except OSError:
-            print('Downloading language model for the spaCy POS tagger '
-                  '(don\'t worry, this will only happen once)')
+            # At the moment, this seems to be the best solution with the requirement of
+            # publishing this on PyPI (https://stackoverflow.com/a/55704556/2223706)
+            logging.info('Downloading language model for the spaCy POS tagger '
+                         '(don\'t worry, this will only happen once)')
             from spacy.cli import download
             download('en_core_web_sm')
             self._nlp = spacy.load('en_core_web_sm')
