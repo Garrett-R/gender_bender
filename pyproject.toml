@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gender-bender"
-version = "0.1.2"
+version = "0.1.3"
 description = "Flips the gender in a text snippet or epub"
 authors = ["Garrett-R"]
 license = "Apache-2.0"

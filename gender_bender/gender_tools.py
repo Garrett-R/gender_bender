@@ -73,7 +73,7 @@ class _GenderBender:
             self._nlp = spacy.load('en_core_web_sm')
 
         self._term_mapper = {}
-        model_dir = os.path.join('gender_bender', 'language_models')
+        model_dir = os.path.join(os.path.dirname(__file__), 'language_models')
         female_file = os.path.join(model_dir, language_model, 'female_names')
         if not os.path.exists(female_file):
             raise MissingLanguageModelError(
