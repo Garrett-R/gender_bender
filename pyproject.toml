@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "Flips the gender in a text snippet or epub"
 authors = ["Garrett-R"]
 license = "Apache-2.0"
+readme = 'README.md'
+repository = "https://github.com/Garrett-R/gender_bender"
+homepage = "https://github.com/Garrett-R/gender_bender"
 
 [tool.poetry.dependencies]
 python = "^3.6"
