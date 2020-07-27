@@ -130,6 +130,13 @@ class TestFlipGender(unittest.TestCase):
         result = gender_bend(text)
         self.assertEqual(result, 'And sayig to him very earnestly, "blah blah"')
 
+    @skip('TODO: get this working...')
+    def test_third_person_singular_declension_and_possessive_in_a_row(self):
+        text = 'Give her her book back'
+
+        result = gender_bend(text)
+        self.assertEqual(result, 'Give him his book back')
+
     def test_contraction(self):
         text = 'She\'ll be there'
 
